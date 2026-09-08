@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dodge Rush 3.0 - Arcade Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+        
+        <!-- Main Menu -->
+        <div id="mainMenu" class="screen active">
+            <div class="menu-background">
+                <div class="stars"></div>
+            </div>
+            <div class="menu-content">
+                <div class="menu-title">
+                    <h1>DODGE RUSH</h1>
+                    <p class="version">3.0</p>
+                </div>
+                
+                <div class="player-stats">
+                    <div class="stat">
+                        <span class="label">LEVEL</span>
+                        <span class="value" id="menuLevel">1</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">COINS</span>
+                        <span class="value" id="menuCoins">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">BEST</span>
+                        <span class="value" id="menuBest">0</span>
+                    </div>
+                </div>
+
+                <div class="selected-ship">
+                    <div id="shipPreview" class="ship-preview"></div>
+                    <p id="shipName">STARTER</p>
+                </div>
+                
+                <div class="menu-buttons">
+                    <button class="btn btn-primary" id="playBtn">PLAY</button>
+                    <button class="btn btn-secondary" id="garageBtn">GARAGE</button>
+                    <button class="btn btn-secondary" id="shopBtn">SHOP</button>
+                    <button class="btn btn-secondary" id="missionsBtn">MISSIONS</button>
+                    <button class="btn btn-secondary" id="achievementsBtn">ACHIEVEMENTS</button>
+                    <button class="btn btn-secondary" id="settingsBtn">SETTINGS</button>
+                    <button class="btn btn-secondary" id="howToPlayBtn">HOW TO PLAY</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="screen">
+            <div class="hud">
+                <div class="hud-left">
+                    <div class="hud-item">
+                        <span class="label">SCORE</span>
+                        <span class="value" id="scoreDisplay">0</span>
+                    </div>
+                    <div class="hud-item">
+                        <span class="label">COINS</span>
+                        <span class="value" id="coinsDisplay">0</span>
+                    </div>
+                </div>
+                <div class="hud-center">
+                    <div class="hud-item">
+                        <span class="label">LEVEL</span>
+                        <span class="value" id="levelDisplay">1</span>
+                    </div>
+                    <div class="hud-item" id="comboDisplay" style="display:none;">
+                        <span class="label">COMBO</span>
+                        <span class="value combo-value">x1</span>
+                    </div>
+                </div>
+                <div class="hud-right">
+                    <div class="hud-item">
+                        <span class="label">HEALTH</span>
+                        <span class="value" id="healthDisplay">100</span>
+                    </div>
+                    <button class="btn-pause" id="pauseBtn">⏸ PAUSE</button>
+                </div>
+            </div>
+
+            <div id="bossHealthBar" class="boss-health-bar" style="display:none;">
+                <div class="boss-name">VOID TITAN</div>
+                <div class="health-bar-container">
+                    <div class="health-bar-fill" id="bossHealthFill"></div>
+                </div>
+                <div class="boss-health-text"><span id="bossHealthText">100</span> / <span id="bossHealthMax">100</span></div>
+            </div>
+
+            <div id="powerUpDisplay" class="power-up-display"></div>
+
+            <!-- Mobile Controls -->
+            <div class="mobile-controls">
+                <button class="mobile-btn left-btn" id="leftBtn">◀</button>
+                <button class="mobile-btn fire-btn" id="fireBtn">🔥</button>
+                <button class="mobile-btn right-btn" id="rightBtn">▶</button>
+            </div>
+        </div>
+
+        <!-- Pause Menu -->
+        <div id="pauseMenu" class="screen">
+            <div class="pause-overlay"></div>
+            <div class="pause-content">
+                <h2>PAUSED</h2>
+                <button class="btn btn-primary" id="resumeBtn">RESUME</button>
+                <button class="btn btn-secondary" id="mainMenuFromPauseBtn">MAIN MENU</button>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen" class="screen">
+            <div class="game-over-content">
+                <h2 id="gameOverTitle">GAME OVER</h2>
+                <div id="newHighScoreBadge" class="new-high-score" style="display:none;">
+                    ⭐ NEW HIGH SCORE! ⭐
+                </div>
+                
+                <div class="game-over-stats">
+                    <div class="stat-row">
+                        <span class="stat-label">SCORE:</span>
+                        <span class="stat-value" id="finalScore">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">COINS:</span>
+                        <span class="stat-value" id="finalCoins">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">LEVEL:</span>
+                        <span class="stat-value" id="finalLevel">1</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">ENEMIES DESTROYED:</span>
+                        <span class="stat-value" id="finalEnemies">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">BEST COMBO:</span>
+                        <span class="stat-value" id="finalCombo">x1</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">SURVIVAL TIME:</span>
+                        <span class="stat-value" id="finalTime">0s</span>
+                    </div>
+                </div>
+
+                <div class="game-over-buttons">
+                    <button class="btn btn-primary" id="playAgainBtn">PLAY AGAIN</button>
+                    <button class="btn btn-secondary" id="garageFromGameOverBtn">GARAGE</button>
+                    <button class="btn btn-secondary" id="mainMenuFromGameOverBtn">MENU</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Garage Screen -->
+        <div id="garageScreen" class="screen">
+            <div class="garage-header">
+                <h2>GARAGE</h2>
+                <button class="btn-back" id="backFromGarageBtn">← BACK</button>
+            </div>
+            <div id="shipsList" class="ships-grid"></div>
+        </div>
+
+        <!-- Shop Screen -->
+        <div id="shopScreen" class="screen">
+            <div class="shop-header">
+                <h2>SHOP</h2>
+                <div class="coins-display">💰 <span id="shopCoins">0</span></div>
+                <button class="btn-back" id="backFromShopBtn">← BACK</button>
+            </div>
+            <div id="upgradesList" class="upgrades-grid"></div>
+        </div>
+
+        <!-- Missions Screen -->
+        <div id="missionsScreen" class="screen">
+            <div class="missions-header">
+                <h2>MISSIONS</h2>
+                <button class="btn-back" id="backFromMissionsBtn">← BACK</button>
+            </div>
+            <div id="missionsList" class="missions-grid"></div>
+        </div>
+
+        <!-- Achievements Screen -->
+        <div id="achievementsScreen" class="screen">
+            <div class="achievements-header">
+                <h2>ACHIEVEMENTS</h2>
+                <button class="btn-back" id="backFromAchievementsBtn">← BACK</button>
+            </div>
+            <div id="achievementsList" class="achievements-grid"></div>
+        </div>
+
+        <!-- Settings Screen -->
+        <div id="settingsScreen" class="screen">
+            <div class="settings-header">
+                <h2>SETTINGS</h2>
+                <button class="btn-back" id="backFromSettingsBtn">← BACK</button>
+            </div>
+            <div class="settings-content">
+                <div class="setting-item">
+                    <label>Sound</label>
+                    <div class="toggle">
+                        <input type="checkbox" id="soundToggle" checked>
+                        <span></span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <label>Music</label>
+                    <div class="toggle">
+                        <input type="checkbox" id="musicToggle" checked>
+                        <span></span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <label>Screen Shake</label>
+                    <div class="toggle">
+                        <input type="checkbox" id="shakeToggle" checked>
+                        <span></span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <label>Particles</label>
+                    <select id="particlesSelect">
+                        <option value="high">High</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label>Difficulty</label>
+                    <select id="difficultySelect">
+                        <option value="normal">Normal</option>
+                        <option value="hard">Hard</option>
+                        <option value="impossible">Impossible</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- How To Play Screen -->
+        <div id="howToPlayScreen" class="screen">
+            <div class="how-to-play-header">
+                <h2>HOW TO PLAY</h2>
+                <button class="btn-back" id="backFromHowToPlayBtn">← BACK</button>
+            </div>
+            <div class="how-to-play-content">
+                <div class="instruction">
+                    <h3>OBJECTIVE</h3>
+                    <p>Survive as long as possible while dodging enemies and collecting coins!</p>
+                </div>
+                <div class="instruction">
+                    <h3>CONTROLS</h3>
+                    <p><strong>Desktop:</strong> Arrow Keys or A/D to move, Spacebar to shoot</p>
+                    <p><strong>Mobile:</strong> Use the on-screen buttons to move and shoot</p>
+                </div>
+                <div class="instruction">
+                    <h3>GAMEPLAY</h3>
+                    <p>• Dodge enemy projectiles and collisions</p>
+                    <p>• Shoot enemies to destroy them and earn points</p>
+                    <p>• Collect coins for currency and bonuses</p>
+                    <p>• Use power-ups strategically</p>
+                    <p>• Build combo multipliers for higher scores</p>
+                    <p>• Defeat bosses at certain levels</p>
+                </div>
+                <div class="instruction">
+                    <h3>ENEMIES</h3>
+                    <p>Different enemy types have different behaviors. Learn their patterns!</p>
+                </div>
+                <div class="instruction">
+                    <h3>PROGRESSION</h3>
+                    <p>Earn coins to unlock ships and upgrades. Complete missions for bonus rewards!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
